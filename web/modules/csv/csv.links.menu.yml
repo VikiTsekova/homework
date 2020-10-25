@@ -1,0 +1,6 @@
+csv.admin:
+  title: 'CSV module settings'
+  description: 'File upload'
+  parent: system.admin_config_development
+  route_name: csv.content
+  weight: 100

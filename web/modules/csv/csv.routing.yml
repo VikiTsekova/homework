@@ -1,0 +1,17 @@
+csv.content:
+  path: '/admin/jira'
+  defaults:
+    _controller: 'Drupal\csv\Controller\CSVcontroller::content'
+    _title: 'CSV module'
+  requirements:
+    _role: 'administrator'
+    _permission: 'access content'
+
+csv.addform:
+  path: '/admin/jira/import'
+  defaults:
+    _form: 'Drupal\csv\Form\CSVblockform'
+    _title: 'CSV upload'
+  requirements:
+    _role: 'administrator'
+    _permission: 'access content'

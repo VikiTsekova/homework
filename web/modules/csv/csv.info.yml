@@ -1,0 +1,18 @@
+name: CSV Module
+description: Creates route accessible only for administrators. With file upload field that allows only CSV format.
+package: Custom
+
+type: module
+core_version_requirement: ^9
+
+configure: csv.settings
+
+php: 7.4
+
+hidden: false
+required: false
+
+# Note: do not add the 'version' or 'project' properties yourself.
+# They will be added automatically by the packager on drupal.org.
+# version: 1.0
+# project: 'csv'
