@@ -50,53 +50,36 @@ class CSVBlockForm extends FormBase {
 	}
 
 	public function validateForm(array &$form, FormStateInterface $form_state) {
-		// parent::validateForm($form, $form_state);
-
-    // $session = \Drupal::request()->getSession();
-		// $session->set('upload', $session->get('upload') + 1);
 		$validators['file_validate_extensions'] = array('csv');
 		$fileData = explode('.', $_FILES['files']['name']['upload']);
 		if( $fileData[1] != 'csv' ){
 			$form_state->setErrorByName('upload', t('Please upload csv file!'));
 		}
 		$tempfile = file_save_upload('upload', $validators );
-		if ( $tempfile === FALSE ) {
-			form_set_error('upload', t("Failed to upload the csv file"));
-		} elseif ( $tempfile !== NULL ) {
-			$tempfile = $form_state->getValue('upload');
+		if ( $tempfile ) {
+			 $tempfile = $form_state->getValue('upload');
+		} else {
+			$form_state->setErrorByName('upload', t('The file can not be uploaded!'));
 		}
-		var_dump($tempfile);
 	}
 
 	public function submitForm(array &$form, FormStateInterface $form_state) {
-		// $session = \Drupal::request()->getSession();
-		// $session->set('upload', $session->get('upload') + 1);
+		//$line = variable_get('user_import_line_max', 1000);
+		ini_set('auto_detect_line_endings', true);
 
-		// $fid = $form_state->set('upload', $form_state->get('upload') + 1);
+		$file = $form_state->getValue('upload');
+		$f = \Drupal\file\Entity\File::load($file);
+		//$destination = $file->get('uri')->value;
+		$handle = fopen($file->filename, "r");
+		
+		$row = fgetcsv( $handle );
+		$columns = [];
 
-
-		$val = $form_state->getValue('upload');
-		var_dump($val);
-		$f = \Drupal\file\Entity\File::load($val);
-		$handle = fopen($f->getFileUri(),"r");
-		 while ($data = fgetcsv($handle, 100000, ",")) {
-			$arr = [];
-			if($int==0 && count($data)!=24){
-				$form_state->setErrorByName("upload","Error csv format.");
-				$continue = FALSE;
-			}
-			$eventstart = strtotime($data[4]);
-			if($eventstart){
-				$arr['eventstart']=$eventstart;
-			} else {
-				$form_state->setErrorByName("upload",$data[4]. " is not a valid Date.");
-			}
-			fclose($handle);
-			//package all data into $list array
-			$list = [];
-			$form_state->setValue('upload', $list );
+		while ( $row = fgetcsv( $handle ) ) {
+		// $row is an array of elements in each row
+		// e.g. if the first column is the email address of the user, try something like
+		//$mail = $row[0];
 		}
-
 	}
 
 }
