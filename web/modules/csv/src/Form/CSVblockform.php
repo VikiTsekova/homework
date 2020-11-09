@@ -4,6 +4,7 @@ namespace Drupal\csv\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\file\Entity\File;
 
 /**
  * csv block form
@@ -45,6 +46,16 @@ class CSVBlockForm extends FormBase {
 		return $form;
 	}
 
+	function session_get($session_name, $default) {
+		if (isset($_SESSION[$session_name])) {
+			return $_SESSION[$session_name];
+		}
+		return $default;
+	}
+	function session_set($session_name, $session_value) {
+		$_SESSION[$session_name] = $session_value;
+	}
+
 	function csv_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
 		$form['#validate'][] = 'csv_validate';
 	}
@@ -65,12 +76,14 @@ class CSVBlockForm extends FormBase {
 
 	public function submitForm(array &$form, FormStateInterface $form_state) {
 		//$line = variable_get('user_import_line_max', 1000);
-		ini_set('auto_detect_line_endings', true);
+		//ini_set('auto_detect_line_endings', true);
 
 		$file = $form_state->getValue('upload');
 		$f = \Drupal\file\Entity\File::load($file);
-		//$destination = $file->get('uri')->value;
-		$handle = fopen($file->filename, "r");
+		
+		$file_real_path = \Drupal::service('file_system')->realpath($f->getFileUri());
+		
+		$handle = fopen($file_real_path, "r");
 		
 		$row = fgetcsv( $handle );
 		$columns = [];
